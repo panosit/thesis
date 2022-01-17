@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300i,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <title>Hua Covid-19 Tracker | Data</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"> 
+</head>
+<body>
+  <section class="navigation">
+    <div class="nav-container">
+      <div class="brand">
+        <a href="/index.html">Hua Covid-19 Tracker</a>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li>
+            <a style="color: white;">{{user}}</a>
+          </li>
+          <li>
+            <a href="/covid">Δήλωση Κρούσματος Covid-19</a>
+          </li>
+          <li>
+            <a href="/show">Show All Data</a>
+          </li>
+          <li>
+            <a href="/logout">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+  <table style="width: 100%; margin: 40px;">
+    <thead>
+       <tr>
+         <th>Θέση</th>
+         <th>Μάθημα</th>
+         <th>Ημερομηνία</th>
+         <th>Ωρα Εναρξης</th>
+         <th>Ωρα λήξης</th>
+         <th>Αίθουσα</th>
+         <!--
+         <th>Χώρητικότητα Αίθουσας</th>
+         <th>Οροφος</th>
+         -->
+       </tr>
+    </thead>
+    <tbody>
+      {% for i in position %}
+       <tr class="even:bg-gray-50">
+        <td class="py-4 px-6">{{i.positionNumber}}</td>
+         <td class="py-4 px-6">{{i.lecture.course.lesson}}</td>
+         <td class="py-4 px-6">{{i.lecture.date}}</td>
+         <td class="py-4 px-6">{{i.lecture.course.startingHour}}</td>
+         <td class="py-4 px-6">{{i.lecture.course.endingHour}}</td>
+         <td class="py-4 px-6">{{i.lecture.course.amphitheater.name}}</td>
+         <!--
+         <td class="py-4 px-6">{{i.lecture.amphitheater.capacity}}</td>
+         <td class="py-4 px-6">{{i.lecture.amphitheater.floor}}</td>
+         -->
+      </tr>
+      {% endfor %}
+    </tbody>
+</body>
+</html>
