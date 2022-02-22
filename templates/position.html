@@ -41,6 +41,7 @@
     <thead>
        <tr>
          <th>Μάθημα</th>
+         <th>Τύπος μαθήματος</th>
          <th>Ημερομηνία</th>
          <th>Ωρα έναρξης</th>
          <th>Ωρα λήξης</th>
@@ -53,6 +54,7 @@
       {% for i in lecture %}
        <tr class="even:bg-gray-50">
          <td class="py-4 px-6">{{i.course.lesson}}</td>
+         <td class="py-4 px-6">{{i.course.lessonType}}</td>
          <td class="py-4 px-6">{{i.date}}</td>
          <td class="py-4 px-6">{{i.course.startingHour}}</td>
          <td class="py-4 px-6">{{i.course.endingHour}}</td>
