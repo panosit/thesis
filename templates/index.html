@@ -41,6 +41,7 @@
     <thead>
        <tr>
          <th>Μάθημα</th>
+         <th>Καθηγητής</th>
          <th>Τύπος μαθήματος</th>
          <th>Ημερομηνία</th>
          <th>Ωρα έναρξης</th>
@@ -54,6 +55,7 @@
       {% for i in lecture %}
        <tr class="even:bg-gray-50">
          <td class="py-4 px-6"><a href="/lectures/{{i.id}}/">{{i.course.lesson}}</a></td>
+         <td class="py-4 px-6">{{i.course.professor}}</td>
          <td class="py-4 px-6">{{i.course.lessonType}}</td>
          <td class="py-4 px-6">{{i.date}}</td>
          <td class="py-4 px-6">{{i.course.startingHour}}</td>

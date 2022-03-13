@@ -16,6 +16,7 @@ class Amphitheater(models.Model):
 class Course(models.Model):
     startingHour=models.TimeField(verbose_name="Ωρα έναρξης")
     endingHour=models.TimeField(verbose_name="Ωρα λήξης")
+    professor=models.CharField(max_length=40,verbose_name='Καθηγητής')
     lesson=models.CharField(max_length=40,verbose_name='Μάθημα')
     lessonType=models.CharField(verbose_name='Τύπος μαθήματος',
       choices=(('Υποχρεωτικό','Υποχρεωτικό'),('Επιλογής','Επιλογής')),max_length=30)
@@ -42,7 +43,7 @@ class Lecture(models.Model):
 class Position(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,verbose_name='Αριθμός μητρώου')
     lecture=models.ForeignKey(Lecture,on_delete=models.CASCADE,verbose_name='Στοιχεία διάλεξης')
-    positionNumber=models.IntegerField(verbose_name='Αριθμός θέσης')
+    positionNumber=models.CharField(max_length=40,verbose_name='Αριθμός θέσης')
 
     class Meta:
         verbose_name='Θέση φοιτητή'
