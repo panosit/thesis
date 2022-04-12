@@ -38,7 +38,7 @@ class Lecture(models.Model):
         verbose_name_plural='Ημερομηνία διαλέξεων'
 
     def __str__(self):
-        return 'Μάθημα: '+self.course.lesson+' Ημερομηνία:'+str(self.date)
+        return 'Μάθημα: '+self.course.lesson+' Ημερομηνία: '+str(self.date)
 
 class Position(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,verbose_name='Αριθμός μητρώου')
@@ -50,7 +50,7 @@ class Position(models.Model):
         verbose_name_plural='Θέσεις φοιτητών'
 
     def __str__(self) -> str:
-        return 'Στοιχεία διάλεξης: '+str(self.lecture)+' ΑΜ:'+self.user.username+' Θέση:'+str(self.positionNumber)
+        return str(self.lecture)+' ΑΜ: '+self.user.username+' Θέση: '+str(self.positionNumber)
 
 class CovidCase(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,verbose_name='Αριθμός μητρώου')
