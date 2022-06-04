@@ -26,7 +26,7 @@ def login(request):
         user=request.user
         if user.is_authenticated==True:
            return redirect('/')
-        else:   
+        else:
            return render(request,'login.html')
 
 @login_required
