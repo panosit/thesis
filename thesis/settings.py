@@ -1,10 +1,11 @@
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 
 BASE_DIR=Path(__file__).resolve().parent.parent
-SECRET_KEY='django-insecure-vg9=o5b!l4g-dbnym4s@y9v&14c0+@7&c(o5u)eok^tp)3c$!8'
-DEBUG=True
-ALLOWED_HOSTS=['*']
+SECRET_KEY=os.getenv('DJANGO_SECRET_KEY','django-insecure-change-me-for-local-development')
+DEBUG=os.getenv('DJANGO_DEBUG','False').lower() in ('1','true','yes','on')
+ALLOWED_HOSTS=[host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS','localhost,127.0.0.1,testserver').split(',') if host.strip()]
 INSTALLED_APPS=[
     'covidtracker.apps.CovidtrackerConfig',
     'django.contrib.admin',
@@ -15,8 +16,8 @@ INSTALLED_APPS=[
     'django.contrib.staticfiles',
 ]
 MIDDLEWARE=[
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -43,7 +44,7 @@ WSGI_APPLICATION='thesis.wsgi.application'
 DATABASES={
     'default':{
         'ENGINE':'django.db.backends.sqlite3',
-        'NAME':BASE_DIR/'db.sqlite3',
+        'NAME':os.getenv('DJANGO_DATABASE_NAME',BASE_DIR/'db.sqlite3'),
     }
 }
 AUTH_PASSWORD_VALIDATORS=[{
@@ -59,11 +60,13 @@ AUTH_PASSWORD_VALIDATORS=[{
 LANGUAGE_CODE='en-us'
 TIME_ZONE='UTC'
 USE_I18N=True
-USE_L10N=True
 USE_TZ=True
 STATIC_URL='/static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-STATIC_ROOT=os.path.join(BASE_DIR,'assets')
+STATIC_ROOT=os.getenv('DJANGO_STATIC_ROOT',os.path.join(BASE_DIR,'assets'))
 MEDIA_URL='/images/'
-MEDIA_ROOT=os.path.join(BASE_DIR,'images')
+MEDIA_ROOT=os.getenv('DJANGO_MEDIA_ROOT',os.path.join(BASE_DIR,'images'))
 DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
+MESSAGE_TAGS={
+    messages.ERROR:'danger',
+}

@@ -48,6 +48,10 @@ class Position(models.Model):
     class Meta:
         verbose_name='Θέση φοιτητή'
         verbose_name_plural='Θέσεις φοιτητών'
+        constraints=[
+            models.UniqueConstraint(fields=['user','lecture'],name='unique_user_lecture_position'),
+            models.UniqueConstraint(fields=['lecture','positionNumber'],name='unique_lecture_position_number'),
+        ]
 
     def __str__(self) -> str:
         return str(self.lecture)+' ΑΜ: '+self.user.username+' Θέση: '+str(self.positionNumber)
@@ -59,6 +63,9 @@ class CovidCase(models.Model):
     class Meta:
         verbose_name='Κρούσμα'
         verbose_name_plural='Κρούσματα'
+        constraints=[
+            models.UniqueConstraint(fields=['user','date'],name='unique_user_covid_case_date'),
+        ]
 
     def __str__(self):
         return 'Αριθμός μητρώου: '+str(self.user.username)+' Ημερομηνία διάγνωσης: '+str(self.date)

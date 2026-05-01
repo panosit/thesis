@@ -7,7 +7,7 @@ This project is a Django web application.
 Choose one setup method:
 
 ### Option A: Run locally (without Docker)
-- Python 3.10+
+- Python 3.14+
 - pip
 
 ### Option B: Run with Docker
@@ -36,22 +36,31 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Step 4: Apply database migrations
+### Step 4: Configure environment variables
+Copy `.env.example` into your deployment environment and set:
+
+- `DJANGO_SECRET_KEY`
+- `DJANGO_DEBUG`
+- `DJANGO_ALLOWED_HOSTS`
+
+For local development, you can run with the defaults or set `DJANGO_DEBUG=True`.
+
+### Step 5: Apply database migrations
 ```bash
 python manage.py migrate
 ```
 
-### Step 5: (Optional) Create an admin user
+### Step 6: (Optional) Create an admin user
 ```bash
 python manage.py createsuperuser
 ```
 
-### Step 6: Start the development server
+### Step 7: Start the development server
 ```bash
 python manage.py runserver
 ```
 
-### Step 7: Open the app
+### Step 8: Open the app
 - Main site: http://localhost:8000
 - Admin: http://localhost:8000/admin
 
@@ -115,3 +124,67 @@ docker compose exec web python manage.py test
 - The included `Dockerfile` runs the app using Gunicorn on port `8000`.
 - `docker-compose.yaml` maps port `8000` and mounts the project directory for easier development.
 - If port `8000` is already in use, stop the conflicting process or change the port mapping in `docker-compose.yaml`.
+
+---
+
+## 3) Run with Kubernetes
+
+These manifests are intended for local Kubernetes tools such as Docker Desktop Kubernetes, Minikube, or Kind.
+
+### Quick local start with Colima
+```bash
+chmod +x scripts/run-k8s-local.sh
+./scripts/run-k8s-local.sh
+```
+
+The script starts Colima with Kubernetes, builds the image, deploys the app, waits for rollout, creates a local admin user, and starts port-forwarding.
+
+Default local credentials:
+
+- Username: `admin`
+- Password: `admin12345`
+
+You can override them:
+```bash
+ADMIN_USERNAME=myadmin ADMIN_PASSWORD='change-me' ./scripts/run-k8s-local.sh
+```
+
+### Step 1: Build the image
+```bash
+docker build -t thesis:latest .
+```
+
+If you use Minikube, build inside Minikube's Docker environment:
+```bash
+eval $(minikube docker-env)
+docker build -t thesis:latest .
+```
+
+### Step 2: Set a real secret key
+Edit `k8s/secret.yaml` and replace `replace-this-with-a-strong-secret-key`.
+
+### Step 3: Deploy
+```bash
+kubectl apply -k k8s
+```
+
+The pod runs database migrations in an init container before starting Gunicorn.
+SQLite data and uploaded media are stored in the `thesis-data` persistent volume claim.
+
+### Step 4: Open the app locally
+```bash
+kubectl port-forward service/thesis-web 8000:8000
+```
+
+Then open:
+
+- Main site: http://localhost:8000
+- Admin: http://localhost:8000/admin
+
+### Useful Kubernetes commands
+```bash
+kubectl get pods
+kubectl logs deployment/thesis-web
+kubectl describe pod -l app=thesis-web
+kubectl delete -k k8s
+```

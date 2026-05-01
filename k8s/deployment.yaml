@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thesis-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thesis-web
+  template:
+    metadata:
+      labels:
+        app: thesis-web
+    spec:
+      initContainers:
+        - name: migrate
+          image: thesis:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c", "mkdir -p /data/images && python manage.py migrate --noinput"]
+          envFrom:
+            - configMapRef:
+                name: thesis-config
+            - secretRef:
+                name: thesis-secret
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      containers:
+        - name: web
+          image: thesis:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: thesis-config
+            - secretRef:
+                name: thesis-secret
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 20
+            periodSeconds: 20
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: thesis-data

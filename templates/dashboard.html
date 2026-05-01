@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300i,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <title>Hua Covid-19 Tracker</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+</head>
+<body>
+  <section class="navigation">
+    <div class="nav-container">
+      <div class="brand">
+        <a href="{% url 'home' %}">Hua Covid-19 Tracker</a>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li>
+            <a style="color: white;">{{request.user.username}}</a>
+          </li>
+          <li>
+            <a href="{% url 'covid' %}">Δήλωση Κρούσματος Covid-19</a>
+          </li>
+          <li>
+            <a href="{% url 'show' %}">Οι θέσεις μου</a>
+          </li>
+          <li>
+            <a href="{% url 'logout' %}">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if page == "home" %}
+    <br>
+    <h2 style="text-align: center;">Σημερινές Διαλέξεις</h2>
+    <table style="width: 100%; margin: 40px;">
+      <thead>
+        <tr>
+          <th>Μάθημα</th>
+          <th>Καθηγητής</th>
+          <th>Τύπος μαθήματος</th>
+          <th>Ημερομηνία</th>
+          <th>Ωρα έναρξης</th>
+          <th>Ωρα λήξης</th>
+          <th>Αίθουσα</th>
+          <th>Χώρητικότητα Αίθουσας</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in lecture %}
+          <tr class="even:bg-gray-50">
+            <td class="py-4 px-6"><a href="{% url 'lecture_detail' i.id %}">{{i.course.lesson}}</a></td>
+            <td class="py-4 px-6">{{i.course.professor}}</td>
+            <td class="py-4 px-6">{{i.course.lessonType}}</td>
+            <td class="py-4 px-6">{{i.date}}</td>
+            <td class="py-4 px-6">{{i.course.startingHour}}</td>
+            <td class="py-4 px-6">{{i.course.endingHour}}</td>
+            <td class="py-4 px-6">{{i.course.amphitheater.name}}</td>
+            <td class="py-4 px-6">{{i.course.amphitheater.capacity}}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td class="py-4 px-6 text-center" colspan="8">Δεν υπάρχουν διαλέξεις για σήμερα.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif page == "show" %}
+    <table style="width: 100%; margin: 40px;">
+      <thead>
+        <tr>
+          <th>Θέση</th>
+          <th>Μάθημα</th>
+          <th>Καθηγητής</th>
+          <th>Τύπος μαθήματος</th>
+          <th>Ημερομηνία</th>
+          <th>Ωρα Εναρξης</th>
+          <th>Ωρα λήξης</th>
+          <th>Αίθουσα</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in position %}
+          <tr class="even:bg-gray-50">
+            <td class="py-4 px-6">{{i.positionNumber}}</td>
+            <td class="py-4 px-6">{{i.lecture.course.lesson}}</td>
+            <td class="py-4 px-6">{{i.lecture.course.professor}}</td>
+            <td class="py-4 px-6">{{i.lecture.course.lessonType}}</td>
+            <td class="py-4 px-6">{{i.lecture.date}}</td>
+            <td class="py-4 px-6">{{i.lecture.course.startingHour}}</td>
+            <td class="py-4 px-6">{{i.lecture.course.endingHour}}</td>
+            <td class="py-4 px-6">{{i.lecture.course.amphitheater.name}}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td class="py-4 px-6 text-center" colspan="8">Δεν έχετε δηλώσει κάποια θέση ακόμα.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif page == "position" %}
+    <br><br>
+    <h2 style="text-align: center;">Στοιχεία Διάλεξης</h2>
+    <table style="width: 100%; margin: 40px;">
+      <thead>
+        <tr>
+          <th>Μάθημα</th>
+          <th>Καθηγητής</th>
+          <th>Τύπος μαθήματος</th>
+          <th>Ημερομηνία</th>
+          <th>Ωρα έναρξης</th>
+          <th>Ωρα λήξης</th>
+          <th>Αίθουσα</th>
+          <th>Χώρητικότητα Αίθουσας</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in lecture %}
+          <tr class="even:bg-gray-50">
+            <td class="py-4 px-6">{{i.course.lesson}}</td>
+            <td class="py-4 px-6">{{i.course.professor}}</td>
+            <td class="py-4 px-6">{{i.course.lessonType}}</td>
+            <td class="py-4 px-6">{{i.date}}</td>
+            <td class="py-4 px-6">{{i.course.startingHour}}</td>
+            <td class="py-4 px-6">{{i.course.endingHour}}</td>
+            <td class="py-4 px-6">{{i.course.amphitheater.name}}</td>
+            <td class="py-4 px-6">{{i.course.amphitheater.capacity}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 p-0 pt-3">
+          <h2 style="text-align: center;">Εισάγετε τον αριθμό της θέσης σας</h2><br>
+          <form class="login-form" action="{% url 'add_position' lecture_obj.id %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3 bg-color">
+              <label>Αριθμός θέσης</label>
+              <input type="text" name="positionNumber" class="form-control" required>
+            </div>
+            <input type="submit" class="btn btn-custom btn-lg btn-block mt-3" value="Εισαγωγή">
+          </form>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+    </div>
+  {% elif page == "covid" %}
+    <br><br>
+    <h2 style="text-align: center;">Δήλωση Κρούσματος</h2><br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 p-0 pt-3">
+          <form class="login-form" action="{% url 'covid_add' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3 bg-color">
+              <label>Ημερομηνία διάγνωσης</label>
+              <input type="date" name="date" class="form-control" required>
+            </div>
+            <input type="submit" class="btn btn-custom btn-lg btn-block mt-3" value="Βεβαίωση Κρούσματος">
+          </form>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+    </div>
+  {% endif %}
+</body>
+</html>
