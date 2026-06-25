@@ -7,7 +7,7 @@ This project is a Django web application.
 Choose one setup method:
 
 ### Option A: Run locally (without Docker)
-- Python 3.14+
+- Python 3.14.6+
 - pip
 
 ### Option B: Run with Docker
@@ -35,6 +35,9 @@ source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+### Dependency updates
+Top-level dependencies are listed in `requirements.in` and pinned in `requirements.txt`. When updating packages, change `requirements.in` first and then refresh `requirements.txt` with your preferred compiler, for example `pip-compile requirements.in`.
 
 ### Step 4: Configure environment variables
 Copy `.env.example` into your deployment environment and set:
@@ -111,6 +114,13 @@ docker compose exec web python manage.py collectstatic --noinput
 Local:
 ```bash
 python manage.py test
+```
+
+### Quality checks
+```bash
+ruff check .
+python manage.py makemigrations --check --dry-run
+python manage.py check --deploy
 ```
 
 Docker:

@@ -3,8 +3,14 @@ import os
 from django.contrib.messages import constants as messages
 
 BASE_DIR=Path(__file__).resolve().parent.parent
+
+
+def env_bool(name, default=False):
+    return os.getenv(name, str(default)).lower() in ('1', 'true', 'yes', 'on')
+
+
 SECRET_KEY=os.getenv('DJANGO_SECRET_KEY','django-insecure-change-me-for-local-development')
-DEBUG=os.getenv('DJANGO_DEBUG','False').lower() in ('1','true','yes','on')
+DEBUG=env_bool('DJANGO_DEBUG')
 ALLOWED_HOSTS=[host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS','localhost,127.0.0.1,testserver').split(',') if host.strip()]
 INSTALLED_APPS=[
     'covidtracker.apps.CovidtrackerConfig',
@@ -64,9 +70,16 @@ USE_TZ=True
 STATIC_URL='/static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 STATIC_ROOT=os.getenv('DJANGO_STATIC_ROOT',os.path.join(BASE_DIR,'assets'))
+STATICFILES_STORAGE='whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL='/images/'
 MEDIA_ROOT=os.getenv('DJANGO_MEDIA_ROOT',os.path.join(BASE_DIR,'images'))
 DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
+SECURE_SSL_REDIRECT=env_bool('DJANGO_SECURE_SSL_REDIRECT')
+SECURE_HSTS_SECONDS=int(os.getenv('DJANGO_SECURE_HSTS_SECONDS','0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS=env_bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS')
+SECURE_HSTS_PRELOAD=env_bool('DJANGO_SECURE_HSTS_PRELOAD')
+SESSION_COOKIE_SECURE=env_bool('DJANGO_SESSION_COOKIE_SECURE')
+CSRF_COOKIE_SECURE=env_bool('DJANGO_CSRF_COOKIE_SECURE')
 MESSAGE_TAGS={
     messages.ERROR:'danger',
 }
